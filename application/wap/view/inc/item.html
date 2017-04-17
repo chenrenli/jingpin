@@ -1,0 +1,30 @@
+<li class="am-g am-list-item-desced pet_list_one_block">
+    <div class="pet_list_one_info">
+        <div class="pet_list_one_info_l">
+            <div class="pet_list_one_info_ico"><img src="{$vo.member_avatar}" alt="{$vo.author}"></div>
+            <div class="pet_list_one_info_name">{$vo.author|default="admin"}</div>
+        </div>
+        <div class="pet_list_one_info_r">
+            <div class="pet_list_tag pet_list_tag_stj" onclick='window.location.href="{:url('wap/topic/lists',array('cate_id'=>$vo['cate_id']))}"'>{$vo.cate_name}</div>
+        </div>
+    </div>
+    <div class=" am-list-main">
+        <h3 class="am-list-item-hd pet_list_one_bt">
+            <a href="{:url('topic/detail', ['id' => $vo['thread_id']])}" title="{$vo.title}" class="">{$vo.title}</a>
+        </h3>
+        {notempty name="$vo.image_list"}
+        <ul data-am-widget="gallery" class="am-gallery am-avg-sm-3 am-avg-md-3 am-avg-lg-3 am-gallery-default pet_list_one_list" >
+            {volist name="$vo.image_list" id="image"}
+            <li>
+                <div class="am-gallery-item">
+                    <a href="{:url('topic/detail', ['id' => $vo['thread_id']])}" class="">
+                        <img src="{$image}"  alt="{$vo.title}"/>
+                    </a>
+                </div>
+            </li>
+            {/volist}
+        </ul>
+        {/notempty}
+        <div class="am-list-item-text pet_list_two_text">{$vo.content}</div>
+    </div>
+</li>

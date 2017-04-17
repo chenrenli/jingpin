@@ -1,0 +1,22 @@
+<div class="row cl">
+    <label class="form-label col-3">
+        {eq name="required" value="true"}
+            <span class="c-red">*</span>
+        {/eq}
+        {$title|default=""}
+    </label>
+    <div class="formControls col-5">
+        <input type="{$type|default='text'}"
+               class="input-text"
+               value="{$defaultValue|default=''}"
+               placeholder="{$placeholder|default=''}"
+               id="{$name}"
+               name="{$name}"
+
+               {eq name="required" value="true"}
+                   nullmsg="该项不能为空"
+               {/eq}
+            >
+    </div>
+    <div class="col-4"> </div>
+</div>

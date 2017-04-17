@@ -1,0 +1,44 @@
+{volist name="feed_list" id="feed"}
+<div class="pet_kjdt_block">
+    <div class="pet_kjdt_user">
+        <div class="pet_kjdt_user_l">
+            <a href="">
+            <img src="{$feed.member_avatar}" alt="">
+            </a>
+        </div>
+        <div class="pet_kjdt_user_r">
+            <div class="pet_kjdt_user_time"><i class="iconfont">&#xe617; </i> {$feed.create_time}</div>
+            <div class="pet_kjdt_user_r_title">{$feed.member_nickname}</div>
+            <!--
+          <div class="pet_kjdt_user_r_info">美国</div>
+          -->
+        </div>
+
+    </div>
+    <div class="pet_kjdt_user_r_font"><a href="{:url('wap/WhiteCollar/feed',array('id'=>$feed['id']))}" style="color:#333;">{$feed.content}</a></div>
+
+    <div class="pet_kjdt_user_r_font_img">
+        {if condition="$feed.image neq ''"}
+        <figure data-am-widget="figure" class="am am-figure am-figure-default "   data-am-figure="{  pureview: 'true' }">
+
+            <img src="{$feed.thumb_image}" data-rel="{$feed.image}" alt="{$feed.content}"/>
+        </figure>
+        {/if}
+
+        <div class="pet_kjdt_user_r_like"><i class="am-icon-heart" onclick="feedLike({$feed.id});"></i>{$feed.feedlikestr}</div>
+        {notempty name="$feed.feed_talk_list"}
+        <div class="pet_kjdt_user_pl">
+            {volist name="$feed.feed_talk_list" id="feed_talk"}
+            <div class="pet_kjdt_user_pl_block">
+                <div class="pet_kjdt_user_pl_block_l"><img src="{$feed_talk.member_avatar}" alt=""></div>
+                <div class="pet_kjdt_user_pl_block_r">
+                    <div class="pet_kjdt_user_pl_block_name">{$feed_talk.member_nickname}</div>
+                    <div class="pet_kjdt_user_pl_block_info">{$feed_talk.content}</div>
+                </div>
+            </div>
+            {/volist}
+        </div>
+        {/notempty}
+    </div>
+</div>
+{/volist}

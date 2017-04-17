@@ -1,0 +1,90 @@
+{include file="public/header" /}
+<body>
+	<div class="pet_mian">
+		<div class="pet_head">
+	      <header data-am-widget="header"class="am-header am-header-default pet_head_block">
+	        <div class="am-header-left am-header-nav ">
+	          <a href="javascript:history.go(-1);" class="iconfont pet_head_jt_ico">&#xe601;</a>
+	        </div>
+	        <div class="pet_news_list_tag_name">设置</div>  
+	      </header>
+	   </div>
+	    <div class="settings">
+	   	 <div class="img"><img  id="imgInfo" src="/{$memberInfo.member_avatar}" alt="" /></div>
+	   	 <div class="upload">
+            <input type = "file" accept="image/*"  name="avatar" id="img"/>
+            <p>上传头像</p>
+	   	 </div>  
+	   	 <div class="nameTop item">
+	   	 	<label>签名:</label>
+	   	    <input type="text" name="member_intro" value="{$member_append.member_intro}"/>
+	   	 </div>
+	   	 <div class="name item">
+	   	 	<label>昵称:</label>
+	   	    <input type="text" name="member_nickname" value="{$memberInfo.member_nickname}"/>
+	   	 </div>
+	   	 <div class="password item">
+	   	 	<label>密码:</label>
+	   	    <input type="password" name="member_password" />
+	   	 </div>
+	   	 <button onclick="submit();">保存</button>
+        <button onclick="logout();">退出</button>
+	    </div>
+	</div>
+	<script src="__STATIC__/js/jquery.min.js"></script>
+    <script src="__STATIC__/js/amazeui.min.js"></script>
+    <script src="__STATIC__/js/upload.js"></script>
+    <script src="__STATIC__/js/layui/layui.js"></script>
+    <script src="__STATIC__/js/common.js"></script>
+    <script>
+        layui.use("upload",function(){
+            //上传图片
+            layui.upload({
+                elem:"#img",
+                unwrap: true,
+                url: "{:url('wap/member/uploadAvatar')}"
+                ,success: function(res){
+                    //console.log(res); //上传成功返回值，必须为json格式
+                    if(res.code==200){
+                        layer.msg(res.msg);
+                    }
+                }
+            });
+        });
+        function submit(){
+            var member_nickname = $("input[name='member_nickname']").val();
+            var member_password = $("input[name='member_password']").val();
+            var member_intro = $("input[name='member_intro']").val();
+            $.ajax({
+                type:"POST",
+                url:"{:url('wap/member/setting')}",
+                data:{"member_nickname":member_nickname,"member_password":member_password,"member_intro":member_intro},
+                dataType:"json",
+                success:function(obj){
+                    layer.msg(obj.msg,{"area":["180px","60px"]});
+                }
+            });
+
+        }
+        /**
+         * 退出登录
+         */
+        function logout(){
+            $.ajax({
+                type:"POST",
+                url:"{:url('wap/member/logout')}",
+                dataType:"json",
+                success:function(obj){
+                        if(obj.code==200){
+                            layer.msg(obj.msg);
+                            window.location.href="{:url('wap/index/index')}";
+                        }else{
+                            layer.msg(obj.msg);
+                        }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+

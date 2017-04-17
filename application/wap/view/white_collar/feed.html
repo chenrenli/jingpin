@@ -1,0 +1,175 @@
+{include file="public/header" /}
+<body style="background:#ececec;padding-bottom:50px;">
+  <div class="pet_mian" >
+    <div class="pet_head">
+      <header data-am-widget="header"
+          class="am-header am-header-default pet_head_block">
+        <div class="am-header-left am-header-nav ">
+          <a href="javascript:history.go(-1);" class="iconfont pet_head_jt_ico">&#xe601;</a>
+        </div>
+<div class="pet_news_list_tag_name">{$memberInfo.member_nickname}</div>
+        <div class="am-header-right am-header-nav">
+          <a href="javascript:;" class="iconfont pet_head_gd_ico">&#xe600;</a>
+        </div>
+      </header>
+    </div>
+    {include file="public/topic_cate" /}
+
+    <div class="pet_content pet_content_list">
+      <div class="pet_sixin">
+          <div class="pet_sixin_nr" id="feed_container">
+        <!--楼主左边-->
+        <div class="pet_sixin_to">
+            <div class="pet_sixin_to_l">
+                <img src="/{$memberInfo.member_avatar}" alt="">
+            </div>
+            <div class="pet_sixin_to_r">
+                <div class="pet_sixin_to_r_nr">
+                <div class="pet_sixin_to_r_nr_sj"></div>
+                  {$feed.content}
+                </div>
+            </div>
+            <div class="pet_sixin_shijian">{$feed.create_time}</div>
+        </div>
+        {notempty name="$feed.image_list"}
+          <div class="pet_sixin_to">
+              {volist name="$feed.image_list" id="image"}
+              <div class="pet_sixin_to_l">
+                  <img src="/{$memberInfo.member_avatar}" alt="">
+              </div>
+              <div class="pet_sixin_to_r">
+                  <div class="pet_sixin_to_r_nr">
+                      <div class="pet_sixin_to_r_nr_sj"></div>
+                      <img src="{$image}" alt="">
+                  </div>
+              </div>
+              {/volist}
+              <div class="pet_sixin_shijian">{$feed.create_time}</div>
+          </div>
+        {/notempty}
+        <div id="talk_container">
+
+        </div>
+
+
+</div>
+    </div>
+       <div class="maskInput">
+	    	<textarea placeholder="输入你的问题或者讨论" id="talkContent"></textarea>
+	    	<button onclick="feedTalk();">发送</button>
+	    </div>
+    </div>
+    <script src="__STATIC__js/jquery.min.js"></script>
+    <script src="__STATIC__js/amazeui.min.js"></script>
+    <script src="__STATIC__js/layui/layui.js"></script>
+    <script src="__STATIC__js/common.js"></script>
+    <script>
+$(function(){
+
+    // 动态计算新闻列表文字样式
+    auto_resize();
+    $(window).resize(function() {
+        auto_resize();
+    });
+    $('.am-list-thumb img').load(function(){
+        auto_resize();
+    });
+    $('.pet_article_like li:last-child').css('border','none');
+        function auto_resize(){
+        $('.pet_list_one_nr').height($('.pet_list_one_img').height());
+                // alert($('.pet_list_one_nr').height());
+    }
+        $('.pet_article_user').on('click',function(){
+            if($('.pet_article_user_info_tab').hasClass('pet_article_user_info_tab_show')){
+                $('.pet_article_user_info_tab').removeClass('pet_article_user_info_tab_show').addClass('pet_article_user_info_tab_cloes');
+            }else{
+                $('.pet_article_user_info_tab').removeClass('pet_article_user_info_tab_cloes').addClass('pet_article_user_info_tab_show');
+            }
+        });
+
+        $('.pet_head_gd_ico').on('click',function(){
+            $('.pet_more_list').addClass('pet_more_list_show');
+       });
+        $('.pet_more_close').on('click',function(){
+            $('.pet_more_list').removeClass('pet_more_list_show');
+        });
+});
+/**
+ * 讨论
+ */
+function feedTalk(){
+   var content = $("#talkContent").val();
+   var feed_id = "{$feed.id}";
+   if(!content){
+       layer.msg("内容不能为空");
+       return false;
+   }
+   if(!feed_id){
+       layer.msg("feed_id不能为空");
+       return false;
+   }
+    $.ajax({
+       type:"POST",
+       url:"{:url('wap/WhiteCollar/feedTalk')}",
+       data:{"content":content,"feed_id":feed_id},
+       dataType:"json",
+       success:function(obj){
+            if(obj.code<0){
+                layer.msg(obj.msg);
+            }
+            if(obj.code==200){
+                layer.msg(obj.msg);
+
+                var html = '<div class="pet_sixin_form">'+
+                           '   <div class="pet_sixin_form_l">'+
+                           '       <img src="'+obj.data.member_avatar+'" alt="">'+
+                           '   </div>'+
+                           '<div class="pet_sixin_form_r">'+
+                           '   <div class="pet_sixin_form_r_nr">'+
+                           '   <div class="pet_sixin_form_r_nr_sj"></div>'+
+                                 obj.data.content+
+                           '</div>'+
+                           '</div>'+
+                           '<div class="pet_sixin_shijian">'+obj.data.create_time+'</div>'+
+                           '</div>';
+
+                $("#feed_container").append(html);
+                var h = $(document).height()-$(window).height();
+                $(document).scrollTop(h);
+
+            }
+       }
+    });
+}
+//流加载talk列表
+layui.use('flow', function(){
+    var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+    var flow = layui.flow;
+    var feed_id = "{$feed.id}";
+    flow.load({
+        elem: '#talk_container' //指定列表容器
+        ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+            var lis = [];
+            //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+            $.get('/wap/WhiteCollar/getTalkList?feed_id='+feed_id+'&page='+page, function(res){
+                /*
+                 //假设你的列表返回在data集合中
+                 layui.each(res.data, function(index, item){
+                 lis.push('<li>'+ item.title +'</li>');
+                 });
+                 */
+                lis.push(res.data.html);
+
+                //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                next(lis.join(''), page < res.pages);
+
+                $(".layui-flow-more").css("display","none");
+            });
+        }
+    });
+});
+
+</script>
+</body>
+  </html>

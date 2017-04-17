@@ -1,0 +1,169 @@
+{include file="public/header" /}
+<body style="background:#ececec;padding-bottom:50px;">
+<div class="pet_mian" >
+    <div class="pet_head">
+        <header data-am-widget="header" class="am-header am-header-default pet_head_block">
+            <div class="am-header-left am-header-nav ">
+                <a href="javascript:history.go(-1);" class="iconfont pet_head_jt_ico">&#xe601;</a>
+            </div>
+            <div class="pet_news_list_tag_name" id="title_container" style="font-size: 12px;">
+                {$article.title}
+            </div>
+            <div class="am-header-right am-header-nav">
+                <a href="javascript:;" class="iconfont pet_head_gd_ico">&#xe600;</a>
+            </div>
+        </header>
+    </div>
+
+    {include file="public/topic_cate" /}
+
+    <div class="pet_content pet_content_list">
+        <div class="pet_zlnr">
+            <div class="pet_zlnr_user">
+                <div class="pet_zlnr_user_l">
+                    <img src="{$article.member_avatar}"
+                         onerror="this.src='{:config('default_avatar')}'"
+                         alt="{$article.author}">
+                </div>
+                <div class="pet_zlnr_user_r">
+                    <div class="pet_zlnr_user_r_name">{$article.author}</div>
+                    <div class="pet_zlnr_user_r_map">{$article.create_time}</div>
+                </div>
+            </div>
+            <div class="pet_zlnr_nr">
+
+                <article data-am-widget="paragraph" class="am-paragraph am-paragraph-default"
+                         data-am-paragraph="{ tableScrollable: true, pureview: true }">
+                    {$article.content}
+                </article>
+                <div class="pet_zlnr_user_list">
+                    <div class="pet_zlnr_user_list_l">
+                        {volist name="like_list" id="vo"}
+                            <img src="{$vo.member_avatar}" alt="">
+                        {/volist}
+                        <div id="userClick"
+                             onclick="{gt name='like_check' value='0'}renoveNum();{else/}addNum();{/gt}" class="pet_zlnr_user_list_l_num">
+                            +<span class="numClickAdd">{$like_count|default=0}</span>
+                        </div>
+                        <div class="pet_zlnr_user_list_l_num_font">
+                            {gt name='like_check' value='0'}取消{/gt}喜欢
+                        </div>
+                    </div>
+                    <div class="pet_zlnr_user_list_r">
+                        <div class="pet_zlnr_user_list_r" id="postListTotalRows"></div>
+                    </div>
+                </div>
+                <div class="pet_zlnr_pl" id="topic_post_container">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="maskInput">
+        <textarea placeholder="回复内容"></textarea>
+        <button>回复</button>
+    </div>
+</div>
+<script src="__STATIC__/js/jquery.min.js"></script>
+<script src="__STATIC__/js/amazeui.min.js"></script>
+<script src="__STATIC__/js/layui/layui.js"></script>
+<script src="__STATIC__/js/common.js"></script>
+<script>
+    var thread_id = "{$thread_id}";
+    layui.use('flow', function(){
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        flow.load({
+            elem: '#topic_post_container' //指定列表容器
+            ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.get('/wap/topic/getTopicPostList?thread_id='+thread_id+'&page='+page, function(res){
+                    /*
+                     //假设你的列表返回在data集合中
+                     layui.each(res.data, function(index, item){
+                     lis.push('<li>'+ item.title +'</li>');
+                     });
+                     */
+                    lis.push(res.data.html);
+
+                    //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                    //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                    next(lis.join(''), page < res.pages);
+                    $("#postListTotalRows").html(res.totalRows+"条回复");
+                    $(".layui-flow-more").css("display","none");
+                });
+            }
+        });
+    });
+
+    $(function(){
+        $(".maskInput").find("button").click(function(){
+            var text = $(".maskInput").find('textarea').val();
+            if(!$.trim(text)){
+                layer.msg("内容不能为空");return;
+            }
+            var params = {
+                id:'{$article.thread_id}',
+                content:text
+            };
+
+            $.post("{:url('Comment/comment')}",params, function (response) {
+                layer.msg(response.msg);
+                location.reload();
+            });
+        });
+
+        // 动态计算新闻列表文字样式
+        auto_resize();
+        $(window).resize(function() {
+            auto_resize();
+        });
+        $('.am-list-thumb img').load(function(){
+            auto_resize();
+        });
+        $('.pet_article_like li:last-child').css('border','none');
+        function auto_resize(){
+            $('.pet_list_one_nr').height($('.pet_list_one_img').height());
+            // alert($('.pet_list_one_nr').height());
+        }
+        $('.pet_article_user').on('click',function(){
+            if($('.pet_article_user_info_tab').hasClass('pet_article_user_info_tab_show')){
+                $('.pet_article_user_info_tab').removeClass('pet_article_user_info_tab_show').addClass('pet_article_user_info_tab_cloes');
+            }else{
+                $('.pet_article_user_info_tab').removeClass('pet_article_user_info_tab_cloes').addClass('pet_article_user_info_tab_show');
+            }
+        });
+
+        $('.pet_head_gd_ico').on('click',function(){
+            $('.pet_more_list').addClass('pet_more_list_show');
+        });
+        $('.pet_more_close').on('click',function(){
+            $('.pet_more_list').removeClass('pet_more_list_show');
+        });
+    });
+
+    function addNum(){
+        var num=$(".numClickAdd").text();
+        num++;
+        $(".numClickAdd").text(num);
+        $.post("{:url('topic/like')}",{ id:'{$article.thread_id}' }, function (response) {
+            layer.msg(response.msg);
+        });
+        //$("#userClick").attr("onclick","renoveNum()");
+       // location.reload();
+    }
+    function renoveNum(){
+        var num=$(".numClickAdd").text();
+        num--;
+        $(".numClickAdd").text(num);
+        $.post("{:url('topic/like')}",{ id:'{$article.thread_id}' }, function (response) {
+            layer.msg(response.msg);
+        });
+        //$("#userClick").attr("onclick","addNum()");
+        //location.reload();
+    }
+</script>
+</body>
+</html>

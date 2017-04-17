@@ -1,0 +1,13 @@
+{volist name="topic_post_list" id="post"}
+    <div class="pet_zlnr_pl_block" style="border-bottom:none">
+        <div class="pet_zlnr_pl_block_l">
+            <img src="{$post.member_avatar}"
+                 onerror="this.src='{:config('default_avatar')}'"
+                 alt="">
+        </div>
+        <div class="pet_zlnr_pl_block_r">
+            {$post.member_nickname|default='admin'}
+            <span>{$post.content}</span>
+        </div>
+    </div>
+{/volist}

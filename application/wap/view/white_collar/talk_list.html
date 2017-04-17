@@ -1,0 +1,14 @@
+{volist name="feed_talk" id="talk"}
+<div class="pet_sixin_form">
+    <div class="pet_sixin_form_l">
+        <img src="{$talk.member_avatar}" alt="">
+    </div>
+    <div class="pet_sixin_form_r">
+        <div class="pet_sixin_form_r_nr">
+            <div class="pet_sixin_form_r_nr_sj"></div>
+            {$talk.content}
+        </div>
+    </div>
+    <div class="pet_sixin_shijian">{$talk.create_time}</div>
+</div>
+{/volist}

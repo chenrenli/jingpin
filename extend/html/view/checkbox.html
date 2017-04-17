@@ -1,0 +1,18 @@
+<div class="row cl">
+    <label class="form-label col-3">
+        {eq name="required" value="true"}
+        <span class="c-red">*</span>
+        {/eq}
+        {$title|default=""}
+    </label>
+    <div class="formControls col-5 skin-minimal">
+        <div class="check-box">
+            <input type="checkbox"
+                   {if condition="$checked === true"} checked="checked" {/if}
+                   id="{$name}"
+                   name="{$name}"
+                   value="{$defaultValue|default=''}">
+            <label for="{$name}">&nbsp;</label>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,87 @@
+{include file="public/header" /}
+<body>
+<div class="pd-20">
+  <form action="{$action}" method="post" class="form form-horizontal" id="form-member-add">
+
+    <div class="row cl">
+      <label class="form-label col-3"><span class="c-red">*</span>用户名：</label>
+      <div class="formControls col-5">
+        <input type="text" class="input-text" value="{$user.member_name}" placeholder="用户名" id="username" name="member_name" datatype="*2-16" nullmsg="用户名不能为空">
+      </div>
+      <div class="col-4"> </div>
+    </div>
+      <div class="row cl">
+          <label class="form-label col-3"><span class="c-red">*</span>手机号：</label>
+          <div class="formControls col-5">
+              <input type="text" class="input-text" value="{$user.member_mobile}" placeholder="用户名" id="mobile" name="member_mobile">
+          </div>
+          <div class="col-4"> </div>
+      </div>
+
+    <div class="row cl">
+      <label class="form-label col-3"><span class="c-red">*</span>邮箱：</label>
+      <div class="formControls col-5">
+        <input type="text" class="input-text" value="{$user.member_email}" placeholder="@" name="member_email" id="email" datatype="e" nullmsg="请输入邮箱！">
+      </div>
+      <div class="col-4"> </div>
+    </div>
+      <div class="row cl">
+          <label class="form-label col-3"><span class="c-red">*</span>性别：</label>
+          <div class="formControls col-5">
+              <select name="member_sex" class="select-box">
+                  <option value="0" {if condition="$user.member_sex eq 0"}selected="selected"{/if}>未知</option>
+                  <option value="1" {if condition="$user.member_sex eq 1"}selected="selected"{/if}>男</option>
+                  <option value="2" {if condition="$user.member_sex eq 2"}selected="selected"{/if}>女</option>
+              </select>
+          </div>
+          <div class="col-4"> </div>
+      </div>
+    <div class="row cl">
+      <div class="col-9 col-offset-3">
+        <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+      </div>
+    </div>
+    <input type="hidden" name="uid" id="uid" value="{$user.member_id}">
+  </form>
+</div>
+</div>
+<script type="text/javascript" src="__STATIC__lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="__STATIC__lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="__STATIC__lib/Validform/5.3.2/Validform.min.js"></script>
+<script type="text/javascript" src="__STATIC__lib/layer/1.9.3/layer.js"></script>
+<script type="text/javascript" src="__STATIC__js/H-ui.js"></script>
+<script type="text/javascript" src="__STATIC__js/H-ui.admin.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+
+  var url = "{$action}";
+  $("#form-member-add").Validform({
+    tiptype:2,
+    callback:function(form){
+      $.ajax({
+        type:"POST",
+        url:url,
+        data:$("#form-member-add").serializeArray(),
+        dataType:"json",
+        success:function(obj){
+          if(obj.code==200){
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.$('.btn-refresh').click();
+            parent.layer.close(index);
+          }else{
+            alert(obj.msg);
+          }
+        }
+      });
+      return false;
+    }
+  });
+});
+</script>
+</body>
+</html>

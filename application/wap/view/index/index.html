@@ -1,0 +1,108 @@
+{include file="public/header" /}
+<body>
+<div data-am-widget="gotop" class="am-gotop am-gotop-fixed">
+    <a href="#top" title="">
+        <img class="am-gotop-icon-custom" src="__STATIC__/img/goTop.png" />
+    </a>
+</div>
+<div class="pet_mian index_mian" id="top">
+<div data-am-widget="slider" class="am-slider am-slider-a1" data-am-slider='{"directionNav":false}' >
+  <ul class="am-slides">
+      {volist name="web_slider_list" id="slider"}
+      <li>
+          <a href="{$slider.url}">
+            <img src="{$slider.image}">
+            <div class="pet_slider_font">
+                <span class="pet_slider_emoji"></span>
+                <span>{$slider.title}</span>
+            </div>
+            <div class="pet_slider_shadow"></div>
+          </a>
+      </li>
+      {/volist}
+  </ul>
+</div>
+<div class="pet_circle_nav">
+    <ul class="pet_circle_nav_list">
+        {volist name="topic_cate_list" id="topic_cate"}
+        <li>
+            <a href="{:url('wap/topic/lists',array('cate_id'=>$topic_cate['cate_id']))}">
+            <img src="{$topic_cate.topic_image}" width="50" height="50" style="border-radius: 50px;"/>
+            </a>
+            <span>{$topic_cate.cate_name}</span>
+        </li>
+        {/volist}
+        <li><a href="javascript:;" class="iconfont pet_nav_gengduo ">&#xe600;</a><span>更多</span></li>
+    </ul>
+   {include file="public/topic_cate" /}
+</div>
+
+<!--列表-->
+<div class="pet_content_main">
+    <div data-am-widget="list_news" class="am-list-news am-list-news-default" >
+      <div class="am-list-news-bd">
+        <ul class="am-list" id="list_content">
+
+        </ul>
+      </div>
+    </div>
+</div>
+
+{include file="public/nav" /}
+</div>
+<script src="__STATIC__/js/amazeui.min.js"></script>
+<script src="__STATIC__/js/layui/layui.js"></script>
+<script src="__STATIC__/js/common.js"></script>
+<script>
+$(function(){
+
+    // 动态计算新闻列表文字样式
+    auto_resize();
+    $(window).resize(function() {
+        auto_resize();
+    });
+    $('.am-list-thumb img').load(function(){
+        auto_resize();
+    });
+
+    $('.am-list > li:last-child').css('border','none');
+    function auto_resize(){
+        $('.pet_list_one_nr').height($('.pet_list_one_img').height());
+
+    }
+        $('.pet_nav_gengduo').on('click',function(){
+            $('.pet_more_list').addClass('pet_more_list_show');
+       });
+        $('.pet_more_close').on('click',function(){
+            $('.pet_more_list').removeClass('pet_more_list_show');
+        });
+});
+
+layui.use('flow', function(){
+    var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+    var flow = layui.flow;
+    flow.load({
+        elem: '#list_content' //指定列表容器
+        ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+            var lis = [];
+            //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+            $.get('/wap/index/getList?page='+page, function(res){
+                /*
+                 //假设你的列表返回在data集合中
+                 layui.each(res.data, function(index, item){
+                 lis.push('<li>'+ item.title +'</li>');
+                 });
+                 */
+                lis.push(res.data.html);
+
+                //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                next(lis.join(''), page < res.pages);
+            });
+        }
+    });
+});
+
+</script>
+</body>
+</html>

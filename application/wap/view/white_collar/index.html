@@ -1,0 +1,128 @@
+{include file="public/header" /}
+<body style="background:#ececec">
+  <div class="pet_mian" >
+    <div class="pet_head">
+      <header data-am-widget="header"
+          class="am-header am-header-default pet_head_block">
+        <div class="am-header-left am-header-nav ">
+          <a href="#left-link" class="iconfont pet_head_jt_ico">&#xe601;</a>
+        </div>
+          <div class="pet_news_list_tag_name" onclick="postFeed();">
+              发表
+          </div>
+        <div class="am-header-right am-header-nav">
+          <a href="javascript:;" class="iconfont pet_head_gd_ico">&#xe600;</a>
+        </div>
+      </header>
+    </div>
+
+   {include file="public/topic_cate" /}
+
+    <div class="pet_content pet_content_list">
+      <div class="pet_kjdt">
+
+       <div class="pet_kjdt_nr" id="list_content">
+
+
+       </div>
+<!--
+<div class="pet_article_dowload">
+      <div class="pet_article_dowload_title">关于Amaze UI</div>
+      <div class="pet_article_dowload_content"><div class="pet_article_dowload_triangle"></div>
+      <div class="pet_article_dowload_ico"><img src="__STATIC__/img/footdon.png" alt=""></div>
+      <div class="pet_article_dowload_content_font">
+
+      </div>
+      <div class="pet_article_dowload_all">
+        <a href="###" class="pet_article_dowload_Az am-icon-apple"> App store</a>
+        <a href="###" class="pet_article_dowload_Pg am-icon-android"> Android</a>
+      </div>
+      </div>
+  </div>
+    <div class="pet_article_footer_info">Copyright(c)2015 PetShow All Rights Reserved</div>
+  -->
+</div>
+      {include file="public/nav" /}
+    </div>
+    <script src="__STATIC__/js/jquery.min.js"></script>
+    <script src="__STATIC__/js/amazeui.min.js"></script>
+    <script src="__STATIC__/js/layui/layui.js"></script>
+    <script src="__STATIC__/js/common.js"></script>
+    <script>
+$(function(){
+
+    // 动态计算新闻列表文字样式
+    auto_resize();
+    $(window).resize(function() {
+        auto_resize();
+    });
+    $('.am-list-thumb img').load(function(){
+        auto_resize();
+    });
+    $('.pet_article_like li:last-child').css('border','none');
+        function auto_resize(){
+        $('.pet_list_one_nr').height($('.pet_list_one_img').height());
+                // alert($('.pet_list_one_nr').height());
+    }
+        $('.pet_article_user').on('click',function(){
+            if($('.pet_article_user_info_tab').hasClass('pet_article_user_info_tab_show')){
+                $('.pet_article_user_info_tab').removeClass('pet_article_user_info_tab_show').addClass('pet_article_user_info_tab_cloes');
+            }else{
+                $('.pet_article_user_info_tab').removeClass('pet_article_user_info_tab_cloes').addClass('pet_article_user_info_tab_show');
+            }
+        });
+
+        $('.pet_head_gd_ico').on('click',function(){
+            $('.pet_more_list').addClass('pet_more_list_show');
+       });
+        $('.pet_more_close').on('click',function(){
+            $('.pet_more_list').removeClass('pet_more_list_show');
+        });
+});
+
+function postFeed(){
+    window.location.href="{:url('wap/WhiteCollar/postFeed')}";
+}
+
+function feedLike(feed_id){
+    $.ajax({
+        type:"POST",
+        url:"{:url('wap/WhiteCollar/feedLike')}",
+        data:{"feed_id":feed_id},
+        dataType:"json",
+        success:function(obj){
+            layer.msg(obj.msg);
+        }
+    });
+}
+
+
+layui.use('flow', function(){
+    var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+    var flow = layui.flow;
+    flow.load({
+        elem: '#list_content' //指定列表容器
+        ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+            var lis = [];
+            //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+            $.get('/wap/WhiteCollar/getFeedList?page='+page, function(res){
+                /*
+                //假设你的列表返回在data集合中
+                layui.each(res.data, function(index, item){
+                    lis.push('<li>'+ item.title +'</li>');
+                });
+                */
+                lis.push(res.data.html);
+
+                //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                next(lis.join(''), page < res.pages);
+            });
+        }
+    });
+});
+
+
+</script>
+</body>
+  </html>

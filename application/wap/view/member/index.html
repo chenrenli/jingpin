@@ -1,0 +1,130 @@
+{include file="public/header" /}
+<body style="background:#ececec">
+<div class="pet_mian" >
+    <div class="pet_head">
+        <header data-am-widget="header"
+                class="am-header am-header-default pet_head_block">
+            <div class="am-header-left am-header-nav ">
+                <a href="javascript:history.go(-1);" class="iconfont pet_head_jt_ico">&#xe601;</a>
+            </div>
+            <div class="pet_news_list_tag_name">{$memberInfo.member_nickname}</div>
+            <div class="am-header-right am-header-nav">
+                <a href="javascript:;" class="iconfont pet_head_gd_ico">&#xe600;</a>
+            </div>
+        </header>
+    </div>
+
+    {include file="public/topic_cate" /}
+    <div class="pet_content pet_content_list">
+        <div class="pet_grzx">
+
+            <div class="pet_grzx_nr">
+                <a href="javascript:void();" class="pet_grzx_ico">
+                    <img src="{$memberInfo.member_avatar}" alt="{$memberInfo.member_nickname}">
+                </a>
+                <div class="pet_grzx_name">{$memberInfo.member_nickname}</div>
+                <div class="pet_grzx_map"></div>
+                <div class="pet_grzx_num_font">
+                    {notempty name="$memberInfo.member_intro"}
+                    {$memberInfo.member_intro}
+                    {/notempty}
+                </div>
+                <div class="pet_grzx_num">
+                    <span>{$memberInfo.like_num}<i>喜欢</i></span>
+                    <span>{$memberInfo.flow_num}<i>关注</i></span>
+                    <span>{$memberInfo.post_num}<i>话题</i></span>
+                </div>
+
+            </div>
+
+            <div class="pet_grzx_list">
+                <div class="pet_content_main pet_article_like_delete">
+                    <div data-am-widget="list_news" class="am-list-news am-list-news-default am-no-layout">
+                        <div class="am-list-news-bd">
+                            <ul class="am-list" id="my_list_container">
+
+
+
+                            </ul>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+</div>
+<div style="margin-bottom:50px;"></div>
+{include file="public/nav" /}
+<script src="__STATIC__/js/amazeui.min.js"></script>
+<script src="__STATIC__/js/layui/layui.js"></script>
+<script src="__STATIC__/js/common.js"></script>
+<script>
+    $(function(){
+
+        // 动态计算新闻列表文字样式
+        auto_resize();
+        $(window).resize(function() {
+            auto_resize();
+        });
+        $('.am-list-thumb img').load(function(){
+            auto_resize();
+        });
+        $('.pet_article_like li:last-child').css('border','none');
+        function auto_resize(){
+            $('.pet_list_one_nr').height($('.pet_list_one_img').height());
+            // alert($('.pet_list_one_nr').height());
+        }
+        $('.pet_article_user').on('click',function(){
+            if($('.pet_article_user_info_tab').hasClass('pet_article_user_info_tab_show')){
+                $('.pet_article_user_info_tab').removeClass('pet_article_user_info_tab_show').addClass('pet_article_user_info_tab_cloes');
+            }else{
+                $('.pet_article_user_info_tab').removeClass('pet_article_user_info_tab_cloes').addClass('pet_article_user_info_tab_show');
+            }
+        });
+
+        $('.pet_head_gd_ico').on('click',function(){
+            $('.pet_more_list').addClass('pet_more_list_show');
+        });
+        $('.pet_more_close').on('click',function(){
+            $('.pet_more_list').removeClass('pet_more_list_show');
+        });
+    });
+
+    var member_id = "{$memberInfo.member_id}";
+    layui.use('flow', function(){
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        flow.load({
+            elem: '#my_list_container' //指定列表容器
+            ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.get('/wap/member/getMyPostTopicList?member_id='+member_id+'&page='+page, function(res){
+                    /*
+                     //假设你的列表返回在data集合中
+                     layui.each(res.data, function(index, item){
+                     lis.push('<li>'+ item.title +'</li>');
+                     });
+                     */
+                    lis.push(res.data.html);
+
+                    //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                    //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                    next(lis.join(''), page < res.pages);
+
+                    $(".layui-flow-more").css("display","none");
+                });
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

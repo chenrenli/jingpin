@@ -1,0 +1,106 @@
+﻿{include file="public/header" /}
+<body>
+<div class="pd-20">
+	<form method="post" class="form form-horizontal" id="form-admin-add">
+		<div class="row cl">
+			<label class="form-label col-2"><span class="c-red">*</span>权限规则标识：</label>
+			<div class="formControls col-10">
+				<input type="text" class="input-text"  placeholder="" id="name" name="name" datatype="*1-100" nullmsg="权限标识不能为空">
+			</div>
+		</div>
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>权限分组模块：</label>
+            <div class="formControls col-4">
+                <select name="group" class="select-box">
+                      <option value="">请选择权限分组</option>
+                      {volist name="group_list" id="group"}
+                      <option value="{$group}">{$group}</option>
+                      {/volist}
+                </select>
+            </div>
+            <div class="formControls col-3">
+                <label>没有分组?请新增权限分组</label>
+            </div>
+            <div class="formControls col-3">
+                <input type="text" class="input-text"  placeholder="" id="group_name" name="group_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>权限中文名称：</label>
+            <div class="formControls col-10">
+                <input type="text" class="input-text"  placeholder="" id="title" name="title" datatype="*1-64" nullmsg="权限名称不能为空">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red"></span>规则附加条件：</label>
+            <div class="formControls col-10">
+                <input type="text" class="input-text"  placeholder="" id="condition" name="condition">
+            </div>
+        </div>
+
+		<div class="row cl">
+			<div class="col-10 col-offset-2">
+
+				<button type="submit" class="btn btn-success radius" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+			</div>
+		</div>
+	</form>
+</div>
+{include file="public/footer" /}
+<script>
+$(function(){
+	$(".permission-list dt input:checkbox").click(function(){
+		$(this).closest("dl").find("dd input:checkbox").prop("checked",$(this).prop("checked"));
+	});
+	$(".permission-list2 dd input:checkbox").click(function(){
+		var l =$(this).parent().parent().find("input:checked").length;
+		var l2=$(this).parents(".permission-list").find(".permission-list2 dd").find("input:checked").length;
+		if($(this).prop("checked")){
+			$(this).closest("dl").find("dt input:checkbox").prop("checked",true);
+			$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",true);
+		}
+		else{
+			if(l==0){
+				$(this).closest("dl").find("dt input:checkbox").prop("checked",false);
+			}
+			if(l2==0){
+				$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",false);
+			}
+		}
+		
+	});
+    //提交表单
+    var url = "{$url}";
+    $("#form-admin-add").Validform({
+        tiptype:2,
+        callback:function(form){
+            //form[0].submit();
+            $.ajax({
+                type:"POST",
+                dataType:"json",
+                data:$("#form-admin-add").serializeArray(),
+                url:url,
+                success:function(obj){
+                    if(obj.status==1){
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.$('.btn-refresh').click();
+                        parent.location.reload();
+                        parent.layer.close(index);
+                    }else{
+                        layer.alert(obj.msg);
+                    }
+
+                }
+
+            });
+
+            //$("#form-admin-add").submit();
+            return false;
+
+        }
+    });
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+{include file="public/header" /}
+<link rel="stylesheet" href="__STATIC__js/layui/css/layui.css"  media="all">
+<body>
+	<div class="pet_mian">
+		<div class="pet_head">
+	      <header data-am-widget="header"class="am-header am-header-default pet_head_block">
+	        <div class="am-header-left am-header-nav ">
+	          <a href="javascript:history.go(-1);" class="iconfont pet_head_jt_ico">&#xe601;</a>
+	        </div>
+	        <div class="pet_news_list_tag_name">发表话题</div>
+	      </header>
+	   </div>
+	    <div class="publish">
+	   	  <div class="tilte">
+	   	  	<input type="text" placeholder="标题" name="title" id="" value="" />
+	   	  </div>
+	   	  <div class="content">
+	   	  	<textarea name="text" id="content" placeholder="内容"></textarea>
+	   	  </div>
+	   	  <button onclick="postTopic();">提交</button>
+	    </div>
+	</div>
+	<script src="__STATIC__js/jquery.min.js"></script>
+    <script src="__STATIC__js/amazeui.min.js"></script>
+    <script src="__STATIC__js/layui/layui.js"></script>
+    <script type="text/javascript">
+        var layedit;
+        var index;
+        layui.use('layedit', function(){
+            layedit = layui.layedit;
+            layedit.set({
+                uploadImage: {
+                    url: "{:url('wap/topic/postTopicImg')}" //接口url
+                    ,type: 'post' //默认post
+                }
+            });
+            index = layedit.build('content',{
+                tool:['image']
+            }); //建立编辑器
+        });
+        function postTopic(){
+            var content = layedit.getContent(index);
+            var cate_id = "{$cate_id}";
+            var title = $("input[name='title']").val();
+            if(!title){
+                layer.msg("标题不能为空");
+                return false;
+            }
+            if(!content){
+                layer.msg("内容不能为空");
+                return false;
+            }
+            $.ajax({
+                type:"POST",
+                url:"{:url('wap/topic/postTopic')}",
+                data:{"cate_id":cate_id,"title":title,"content":content},
+                dataType:"json",
+                success:function(obj){
+                    if(obj.code<0){
+                        layer.msg(obj.msg);
+                    }
+                    if(obj.code==200){
+                        layer.msg(obj.msg);
+                        setTimeout(function(){
+                            window.location.href="{:url('wap/topic/lists')}"+"?cate_id="+obj.data.cate_id;
+                        },500)
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

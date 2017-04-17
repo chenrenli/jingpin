@@ -1,0 +1,114 @@
+﻿{include file="public/header" /}
+<body>
+<nav class="breadcrumb">
+	<i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 管理员管理
+	<span class="c-gray en">&gt;</span> 管理员列表
+	<a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="pd-20">
+    {literal}
+    <div class="text-c"> 日期范围：
+        <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}'})" id="datemin" class="input-text Wdate" style="width:120px;">
+        -
+        <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d'})" id="datemax" class="input-text Wdate" style="width:120px;">
+        <input type="text" class="input-text" style="width:250px" placeholder="请输入标题关键字" id="keyword" name="q">
+        <button type="submit" class="btn btn-success radius" id="" name="">
+			<i class="Hui-iconfont">&#xe665;</i> 搜帖子
+		</button>
+    </div>
+    {/literal}
+	</div>
+	<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l">
+        <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius">
+			<i class="Hui-iconfont">&#xe6e2;</i> 批量删除
+		</a>
+        <a href="javascript:;" onclick="layer_show('添加帖子','{:url('add')}','',500);" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加帖子</a></span>
+		<span class="r">共有数据：<strong>{$datas->total()}</strong> 条</span> </div>
+	<table class="table table-border table-bordered table-bg">
+		<thead>
+			<tr>
+				<th scope="col" colspan="12">帖子列表</th>
+			</tr>
+			<tr class="text-c">
+				<th width="20">
+					<input type="checkbox" name="" value="">
+				</th>
+				<th width="30">ID</th>
+				<th width="150">标题</th>
+				<th width="40">分类名</th>
+				<th width="50">作者</th>
+				<th width="40">回复数</th>
+				<th width="40">热门</th>
+				<th width="40">精华</th>
+				<th width="40">置顶</th>
+				<th width="40">已删除</th>
+				<th width="40">创建时间</th>
+				<th width="100">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+		{volist name="datas" id="vo" key="key"}
+			<tr class="text-c">
+				<td><input type="checkbox" value="{$vo.thread_id}" name="ids[]"></td>
+				<td>{$vo.thread_id}</td>
+				<td>{$vo.title}</td>
+				<td>{$vo.cate_name}</td>
+				<td>{$vo.author}</td>
+				<td>{$vo.reply_total}</td>
+				<td>{$vo.is_hot_name}</td>
+				<td>{$vo.is_essence_name}</td>
+				<td>{$vo.is_top_name}</td>
+				<td>{$vo.is_delete_name}</td>
+				<td>{$vo.create_time}</td>
+				<td class="td-manage">
+					<a title="编辑" href="javascript:;" onclick="layer_show('{$vo.title}','{:url("edit", ['id'=>$vo['thread_id']])}','','500')" class="ml-5" style="text-decoration:none">
+						<i class="Hui-iconfont">&#xe6df;</i>
+					</a>
+					<a title="删除" href="javascript:;" onclick="admin_del(this,'1')" class="ml-5" style="text-decoration:none">
+						<i class="Hui-iconfont">&#xe6e2;</i>
+					</a>
+				</td>
+			</tr>
+		{/volist}
+		</tbody>
+	</table>
+	{$page_html}
+</div>
+{include file="public/footer" /}
+<script>
+    function datadel(){
+        var idsObj = $("input[name='ids\[\]']");
+        var ids = '';
+        for(var i=0;i<idsObj.length;i++){
+            var is_check = idsObj[i].checked;
+            if(is_check){
+                var id = $(idsObj[i]).val();
+                ids += id+",";
+            }
+        }
+        if(ids==''){
+            alert("必须选中一个选项");
+            return false;
+        }
+        ids = ids.substr(0,ids.length-1);
+        var url = "{:url('admin/topic/delete')}";
+
+        layer.confirm('确认要删除吗？',function(index){
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.ajax({
+                type:"POST",
+                dataType:"json",
+                data:{"id":ids},
+                url:url,
+                success:function(obj){
+                    if(obj.status==1)
+                        layer.msg('已删除!',{icon:1,time:1000});
+
+                    location.replace(location.href)
+                }
+            });
+
+        });
+    }
+</script>
+</body>
+</html>

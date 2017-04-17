@@ -1,0 +1,90 @@
+{include file="public/header" /}
+<body>
+<div class="pd-20">
+  <form action="{:url('admin/TopicCate/add')}" method="post"  class="form form-horizontal" id="form-add">
+    <div class="row cl">
+      <label class="form-label col-3"><span class="c-red">*</span>父级分类：</label>
+      <div class="formControls col-5">
+        <select name="parent_id" class="select-box">
+            <option value="0">请选择父级分类</option>
+            {volist name="cate_list" id="cate"}
+              <option value="{$cate.cate_id}">{if condition="$cate.deep gt 0"}{$cate.icon}{/if}{$cate.cate_name}</option>
+            {/volist}
+        </select>
+      </div>
+      <div class="col-4"> </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-3"><span class="c-red">*</span>分类名称：</label>
+      <div class="formControls col-5">
+        <input type="text" name="cate_name" class="input-text"/>
+      </div>
+      <div class="col-4"> </div>
+    </div>
+      <div class="row cl">
+          <label class="form-label col-3"><span class="c-red">*</span>分类图标：</label>
+          <div class="formControls col-7">
+
+            <span class="btn-upload form-group">
+              <input class="input-text upload-url radius" type="text" name="uploadfile-1" id="topic_image" readonly><a href="javascript:void();" class="btn btn-primary radius"><i class="iconfont">&#xf0020;</i> 浏览文件</a>
+              <input type="file" multiple name="topic_image" id="img" class="input-file">
+              <input type="hidden" name="file_id" />
+            </span>
+          </div>
+          <div class="col-2">50*50</div>
+      </div>
+    <div class="row cl">
+      <div class="col-9 col-offset-3">
+        <input class="btn btn-primary radius" type="submit" onclick="return postTopicCate();" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+      </div>
+    </div>
+  </form>
+</div>
+</div>
+{include file="public/footer" /}
+<script src="__STATIC__/js/layui/layui.js"></script>
+<script src="__STATIC__/js/common.js"></script>
+<script type="text/javascript">
+
+    layui.use("upload",function(){
+        //上传图片
+        layui.upload({
+            elem:"#img",
+            unwrap: true,
+            url: "{:url('admin/TopicCate/uploadTopicCateImage')}"
+            ,success: function(res){
+                //console.log(res); //上传成功返回值，必须为json格式
+                if(res.code==200){
+                    layer.msg(res.msg);
+                    $("input[name='file_id']").val(res.data.file_id);
+                    $("#topic_image").val(res.data.src);
+                }
+            }
+        });
+
+        $("#layui-upload-iframe").css("display","none");
+    });
+        function postTopicCate(){
+            var url = "{$url}";
+            $.ajax({
+                type:"POST",
+                url:url,
+                data:$("#form-add").serializeArray(),
+                dataType:"json",
+                success:function(obj){
+                    if(obj.code==200){
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.$('.btn-refresh').click();
+                        parent.layer.close(index);
+                    }else{
+                        layer.msg(obj.msg);
+                    }
+
+                }
+            });
+            return false;
+        }
+
+</script>
+</body>
+</html>

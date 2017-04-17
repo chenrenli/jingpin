@@ -1,0 +1,12 @@
+<div class="row cl">
+    <label class="form-label col-3">
+        {eq name="required" value="true"}
+            <span class="c-red">*</span>
+        {/eq}
+        {$title|default=""}
+    </label>
+    <div class="formControls col-5">
+        <textarea name="{$name}" cols="" rows="" class="textarea"  placeholder="">{$defaultValue|default=""}</textarea>
+    </div>
+    <div class="col-4"> </div>
+</div>

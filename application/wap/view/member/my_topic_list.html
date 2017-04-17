@@ -1,0 +1,23 @@
+{volist name="topic_list" id="topic"}
+<li class="am-g am-list-item-desced pet_list_one_block">
+
+    <div class=" am-list-main">
+        <h3 class="am-list-item-hd pet_list_one_bt"><a href="{:url('wap/Topic/detail',array('id'=>$topic['thread_id']))}" class="">{$topic.title}</a></h3>
+        <ul data-am-widget="gallery" class="am-gallery am-avg-sm-3
+          am-avg-md-3 am-avg-lg-3 am-gallery-default pet_list_one_list" >
+            {notempty name="$topic.image_list"}
+            {volist name="$topic.image_list" id="image"}
+            <li>
+                <div class="am-gallery-item">
+                    <a href="{:url('wap/Topic/detail',array('id'=>$topic['thread_id']))}" class="">
+                        <img src="{$image}"  alt="{$topic.title}"/>
+                    </a>
+                </div>
+            </li>
+            {/volist}
+            {/notempty}
+        </ul>
+        <div class="am-list-item-text pet_list_two_text">{$topic.content}</div>
+    </div>
+</li>
+{/volist}

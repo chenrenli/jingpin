@@ -1,0 +1,48 @@
+{include file="public/header" /}
+
+<body>
+<div class="pd-20">
+    <form action="" method="post" class="form form-horizontal" id="form-admin-add">
+        {volist name="form_html" id="html"}
+            {$html}
+        {/volist}
+
+        <div class="row cl">
+            <div class="col-9 col-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</div>
+
+{include file="public/js" /}
+
+<script type="text/javascript">
+var url = '{:url("")}';
+$(function(){
+    $("#form-admin-add").Validform({
+        tiptype:2,
+        callback:function(form){
+            $.ajax({
+                type:"POST",
+                url:url,
+                data:$("#form-admin-add").serializeArray(),
+                dataType:"json",
+                success:function(obj){
+                    if(obj.code==200){
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.$('.btn-refresh').click();
+                        parent.layer.close(index);
+                    }else{
+                       // alert(obj.msg);
+                        layer_error(obj.msg);
+                    }
+                }
+            });
+            return false;
+        }
+    });
+});
+</script>
+</body>
+</html>

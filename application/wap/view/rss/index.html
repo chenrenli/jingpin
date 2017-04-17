@@ -1,0 +1,82 @@
+{include file="public/header" /}
+<body>
+	<div class="pet_mian">
+		<div class="pet_head">
+	      <header data-am-widget="header"class="am-header am-header-default pet_head_block">
+              <div class="am-header-left am-header-nav ">
+                  <a href="javascript:history.go(-1);" class="iconfont pet_head_jt_ico">&#xe601;</a>
+              </div>
+	        <div class="pet_news_list_tag_name">选择您关注的话题</div>
+              <div class="am-header-right am-header-nav">
+                  <a href="{:url('wap/index/index')}">完成</a>
+              </div>
+	      </header>
+	   </div>
+	   <div class="follow">
+	   	 <h3>我的订阅</h3>
+	   	 <ul class="my_rss">
+           {notempty name="rss_list"}
+             {volist name="rss_list" id="rss"}
+	   	 	<li attr="{$rss.cate_id}">{$rss.cate_name}</li>
+             {/volist}
+           {/notempty}
+
+	   	 </ul>
+         <div class="cate_list">
+         {volist name="cate_list" id="cate"}
+	   	 <h3>{$cate.cate_name}</h3>
+           {notempty name="$cate.child"}
+	   	 <ul>
+             {volist name="$cate.child" id="children"}
+	   	 	   <li attr="{$children.cate_id}">{$children.cate_name}</li>
+             {/volist}
+	   	 </ul>
+           {/notempty}
+        {/volist}
+        </div>
+	   </div>
+	</div>
+    <script src="__STATIC__/js/layui/layui.js"></script>
+    <script src="__STATIC__/js/common.js"></script>
+<script>
+
+function doRss(dom){
+    $(dom).find("li").bind("click",function(){
+        var cate_id = $(this).attr("attr");
+        var cate_name = $(this).html();
+        if(!cate_id){
+            layer.msg("参数不能为空");
+            return false;
+        }
+        $.ajax({
+            type:"POST",
+            data:{"cate_id":cate_id},
+            dataType:"json",
+            url:"{:url('wap/Rss/doRss')}",
+            success:function(obj){
+                if(obj.code==200){
+                    if(obj.data.is_delete==1){
+                        var $li = $(".my_rss").find("li");
+                        for(var i=0;i<$li.length;i++){
+                            if($($li[i]).attr("attr")==cate_id){
+                                $($li[i]).remove();
+                            }
+                        }
+                    }else{
+                        $(".my_rss").append("<li attr='"+cate_id+"'>"+cate_name+"</li>");
+                    }
+                }
+                layer.msg(obj.msg);
+            }
+        });
+
+    });
+}
+doRss(".cate_list");
+doRss(".my_rss");
+
+</script>
+</body>
+</html>
+
+

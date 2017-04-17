@@ -1,0 +1,109 @@
+﻿{include file="public/header" /}
+<body>
+<div class="pd-20">
+	<form action="" method="post" class="form form-horizontal" id="form-admin-add">
+		<div class="row cl">
+			<label class="form-label col-2"><span class="c-red">*</span>角色名称：</label>
+			<div class="formControls col-10">
+				<input type="text" class="input-text" value="{$info.title}" placeholder="" id="user-name"  name="title" datatype="*2-16" nullmsg="角色名称不能为空">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-2">权限：</label>
+			<div class="formControls col-10">
+              <?php $group_i=0;?>
+              {foreach name="group_list" item="group" key="key"}
+                  <?php $group_i++?>
+                  <dl class="permission-list">
+                      <dt>
+                          <label>
+                              <input type="checkbox" value="" name="user-Character-<?php echo $group_i;?>" id="user-Character-<?php echo $group_i;?>">
+                              {$key}</label>
+                      </dt>
+                      <dd>
+                          <dl class="cl permission-list2">
+                              <dt>
+                                  <label class="">
+                                      <input type="checkbox" value="" name="user-Character-1-0" id="user-Character-1-0"  checked='checked'>
+                                      {$key}</label>
+                              </dt>
+                              <dd>
+                                  {volist name="group" id="data" key="k"}
+                                  <label class="">
+                                      <input type="checkbox" value="{$data.id}"  {if condition="$data.checked eq 'checked'"}checked="checked"{/if} name="rule_ids[]" id="user-Character-1-<?php echo $group_i;?>-{$k}">
+                                      {$data.title}</label>
+                                  {/volist}
+
+                              </dd>
+                          </dl>
+                      </dd>
+                  </dl>
+              {/foreach}
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-10 col-offset-2">
+                <input type="hidden" name="id" value="{$info.id}"/>
+				<button type="submit" class="btn btn-success radius" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+			</div>
+		</div>
+	</form>
+</div>
+{include file="public/footer" /}
+<script>
+$(function(){
+    //提交表单
+    var url = "{$url}";
+    $("#form-admin-add").Validform({
+        tiptype:2,
+        callback:function(form){
+            //form[0].submit();
+            $.ajax({
+                type:"POST",
+                dataType:"json",
+                data:$("#form-admin-add").serializeArray(),
+                url:url,
+                success:function(obj){
+                    if(obj.code==200){
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.location.reload();
+                        parent.layer.close(index);
+                    }else{
+                        layer.alert(obj.msg);
+                    }
+
+                }
+
+            });
+            return false;
+
+        }
+    });
+
+
+	$(".permission-list dt input:checkbox").click(function(){
+		$(this).closest("dl").find("dd input:checkbox").prop("checked",$(this).prop("checked"));
+	});
+	$(".permission-list2 dd input:checkbox").click(function(){
+		var l =$(this).parent().parent().find("input:checked").length;
+		var l2=$(this).parents(".permission-list").find(".permission-list2 dd").find("input:checked").length;
+		if($(this).prop("checked")){
+			$(this).closest("dl").find("dt input:checkbox").prop("checked",true);
+			$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",true);
+		}
+		else{
+			if(l==0){
+				$(this).closest("dl").find("dt input:checkbox").prop("checked",false);
+			}
+			if(l2==0){
+				$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",false);
+			}
+		}
+		
+	});
+
+});
+</script>
+</body>
+</html>

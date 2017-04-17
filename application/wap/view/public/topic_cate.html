@@ -1,0 +1,23 @@
+<div class="pet_more_list">
+    <div class="pet_more_list_block">
+        <div style="float:left;margin-top:5px;"><a href="{:url('wap/rss/index')}">+(订阅)</a></div>
+        <div class="iconfont pet_more_close">×</div>
+        <div style="clear:both;"></div>
+        <div class="pet_more_list_block">
+            <div class="pet_more_list_block_name">
+                {volist name="cate_list" id="cate"}
+                <div class="pet_more_list_block_name_title">{$cate.cate_name}</div>
+                {notempty name="$cate.child"}
+                {volist name="$cate.child" id="children"}
+                <a class="pet_more_list_block_line" href="{:url('wap/topic/lists',array('cate_id'=>$children['cate_id']))}">
+                    <i class="iconfont pet_nav_kantuya pet_more_list_block_line_ico">&#xe62c;</i>
+                    <div class="pet_more_list_block_line_font">{$children.cate_name}</div>
+                </a>
+                {/volist}
+                {/notempty}
+                {/volist}
+            </div>
+        </div>
+
+    </div>
+</div>

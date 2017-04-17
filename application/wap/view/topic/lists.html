@@ -1,0 +1,129 @@
+{include file="public/header" /}
+<body style="background:#ececec">
+<div data-am-widget="gotop" class="am-gotop am-gotop-fixed">
+    <a href="#top" title="">
+        <img class="am-gotop-icon-custom" src="__STATIC__/img/goTop.png" />
+    </a>
+</div>
+  <div class="pet_mian" >
+    <div class="pet_head">
+      <header data-am-widget="header"
+          class="am-header am-header-default pet_head_block">
+        <div class="am-header-left am-header-nav ">
+          <a href="javascript:history.go(-1);" class="iconfont pet_head_jt_ico">&#xe601;</a>
+        </div>
+          <div class="pet_news_list_tag_name" onclick="postTopic({$cate_id});">
+                {$topic_cate.cate_name}
+          </div>
+        <div class="am-header-right am-header-nav">
+          <a href="javascript:;" class="iconfont pet_head_gd_ico">&#xe600;</a>
+        </div>
+      </header>
+    </div>
+
+    {include file="public/topic_cate" /}
+
+    <div class="pet_content pet_content_list">
+      <div class="topic_cate">
+          <div class="topic_cate_left">
+                <img src="/{$topic_cate.topic_image}" />
+          </div>
+          <div class="topic_cate_right">
+               <div style="font-size: 1em;margin-top: 0em;">{$topic_cate.cate_name}</div>
+               <div><span>{$subscribe_count}人关注</span>.<span>{$total}个话题</span></div>
+               <div>
+                   <a href="javascript:postTopic({$cate_id});"><img src="__STATIC__images/tougao.png" width="80"/></a>
+               </div>
+          </div>
+      </div>
+      <div class="pet_article_like">
+        <div class="pet_content_main pet_article_like_delete">
+          <div data-am-widget="list_news" class="am-list-news am-list-news-default am-no-layout">
+            <div class="am-list-news-bd">
+              <ul class="am-list" id="item_container">
+                <!--缩略图在标题右边-->
+
+              </ul>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="pet_article_footer_info"></div>
+      </div>
+    </div>
+    <script src="__STATIC__js/jquery.min.js"></script>
+    <script src="__STATIC__js/amazeui.min.js"></script>
+      <script src="__STATIC__/js/layui/layui.js"></script>
+      <script src="__STATIC__/js/common.js"></script>
+    <script>
+$(function(){
+
+    // 动态计算新闻列表文字样式
+    auto_resize();
+    $(window).resize(function() {
+        auto_resize();
+    });
+    $('.am-list-thumb img').load(function(){
+        auto_resize();
+    });
+    $('.pet_article_like li:last-child').css('border','none');
+        function auto_resize(){
+        $('.pet_list_one_nr').height($('.pet_list_one_img').height());
+                // alert($('.pet_list_one_nr').height());
+    }
+        $('.pet_article_user').on('click',function(){
+            if($('.pet_article_user_info_tab').hasClass('pet_article_user_info_tab_show')){
+                $('.pet_article_user_info_tab').removeClass('pet_article_user_info_tab_show').addClass('pet_article_user_info_tab_cloes');
+            }else{
+                $('.pet_article_user_info_tab').removeClass('pet_article_user_info_tab_cloes').addClass('pet_article_user_info_tab_show');
+            }
+        });
+
+        $('.pet_head_gd_ico').on('click',function(){
+            $('.pet_more_list').addClass('pet_more_list_show');
+       });
+        $('.pet_more_close').on('click',function(){
+            $('.pet_more_list').removeClass('pet_more_list_show');
+        });
+});
+/**
+ * 发表话题页面
+ */
+function postTopic(cate_id){
+  window.location.href="{:url('wap/Topic/post')}"+"?cate_id="+cate_id;
+}
+var cate_id = "{$cate_id}";
+layui.use('flow', function(){
+    var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+    var flow = layui.flow;
+    flow.load({
+        elem: '#item_container' //指定列表容器
+        ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+            var lis = [];
+            //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+            $.get('/wap/topic/getList?cate_id='+cate_id+'&page='+page, function(res){
+                /*
+                 //假设你的列表返回在data集合中
+                 layui.each(res.data, function(index, item){
+                 lis.push('<li>'+ item.title +'</li>');
+                 });
+                 */
+                lis.push(res.data.html);
+
+                //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                next(lis.join(''), page < res.pages);
+
+                $(".layui-flow-more").css("display","none");
+            });
+        }
+    });
+});
+
+</script>
+</body>
+  </html>
