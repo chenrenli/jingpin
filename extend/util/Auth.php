@@ -23,6 +23,7 @@ class Auth{
                 $rules .=$row['rules'];
             }
         }
+        $rules = explode(",",$rules);
         return $rules;
     }
 

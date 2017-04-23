@@ -24,7 +24,7 @@ class Base extends Controller{
      */
     protected  function checkAccess(){
         $uid = $_SESSION['uid'];
-        $auth = new \Think\Auth();
+        $auth = new \util\Auth();
         $name = strtolower($this->request->controller()."_".$this->request->action());
         $access = $auth->check($name,$uid);
         if(!$access && $uid!=1){
