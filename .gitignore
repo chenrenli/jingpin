@@ -4,3 +4,4 @@ composer.lock
 /application/database.php
 /runtime
 public/upload/
+test.txt
