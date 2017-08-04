@@ -93,7 +93,6 @@ class AuthRule extends Base{
             $id = $this->request->param("id");
             $info = \app\common\model\AuthRule::get($id);
             $group_list = (new \app\common\model\AuthRule())->getGroupNameList(array());
-
             $this->assign("info",$info);
             $this->assign("group_list",$group_list);
             $this->assign("id",$id);

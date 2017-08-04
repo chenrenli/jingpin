@@ -18,6 +18,7 @@ class AuthRule  extends \think\Model{
         return self::all($map);
      }
      public function getGroupNameList($map){
+
         $list = $this->where($map)->group("group_name")->select();
         $result = array();
         foreach($list as $val){

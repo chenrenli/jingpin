@@ -6,6 +6,7 @@ use app\common\model\Setting;
 use app\common\model\TopicCate;
 use app\common\service\Topic as TopicService;
 use think\Config;
+use think\Request;
 
 class Index extends Base{
     public function index(){
