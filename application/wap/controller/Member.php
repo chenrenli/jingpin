@@ -218,7 +218,7 @@ class Member extends Base{
                 if(!$result){
                     return output_error("登录失败,登录token设置失败",-401);
                 }
-                if(!$url) $url = url("wap/index/index");
+                if(!$url) $url = url("wap/rss/index");
 
                 $data['url'] = $url;
                 //redirect($url);

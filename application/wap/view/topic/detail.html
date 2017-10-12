@@ -146,9 +146,11 @@
 
     function addNum(){
         var num=$(".numClickAdd").text();
-        num++;
         $(".numClickAdd").text(num);
         $.post("{:url('topic/like')}",{ id:'{$article.thread_id}' }, function (response) {
+            if(response.code==200){
+                num++;
+            }
             layer.msg(response.msg);
         });
         //$("#userClick").attr("onclick","renoveNum()");
@@ -156,9 +158,11 @@
     }
     function renoveNum(){
         var num=$(".numClickAdd").text();
-        num--;
         $(".numClickAdd").text(num);
         $.post("{:url('topic/like')}",{ id:'{$article.thread_id}' }, function (response) {
+            if(response.code==200){
+                num--;
+            }
             layer.msg(response.msg);
         });
         //$("#userClick").attr("onclick","addNum()");

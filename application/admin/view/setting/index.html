@@ -2,9 +2,9 @@
 <body>
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 系统管理 <span class="c-gray en">&gt;</span> 基本设置 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="pd-20">
-	<form action="" method="post" class="form form-horizontal" id="form-article-add">
+	<form action="{:url('setting/save')}" method="post" class="form form-horizontal" id="form-article-add">
 		<div id="tab-system" class="HuiTab">
-			<div class="tabBar cl"><span>基本设置</span><span>安全设置</span><span>邮件设置</span><span>其他设置</span></div>
+			<div class="tabBar cl"><span>基本设置</span><span>安全设置</span><span>邮件设置</span><span>微信公众号设置</span></div>
 			<div class="tabCon">
 				<div class="row cl">
 					<label class="form-label col-2"><span class="c-red">*</span>网站名称：</label>
@@ -108,7 +108,18 @@
 				</div>
 			</div>
 			<div class="tabCon">
-				
+				<div class="row cl">
+					<label class="form-label col-2">微信appid：</label>
+					<div class="formControls col-10">
+						<input type="text" name="weixin_appid" value="" class="input-text">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-2">微信秘钥：</label>
+					<div class="formControls col-10">
+						<input type="text" name="weixin_secret" value="" class="input-text">
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="row cl">
